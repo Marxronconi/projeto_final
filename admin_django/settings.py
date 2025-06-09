@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 from django.conf.global_settings import MEDIA_URL
 
@@ -27,12 +28,13 @@ SECRET_KEY = 'plv^z1yqohjf0i(e+(pig9ac&_hc=syuirn8&v!&ufc207r&z9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'admin_django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,6 +104,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+JAZZMIN_SETTINGS = {
+    "site_logo": "images/logo.png",
+    "site_logo_classes": "img-circle",
+    "site_title": "TechRest",
+    "site_header": "TechRest",
+    "site_brand": "TechRest",
+    "welcome_sign": "Bem-vindo ao Painel do TechRest",
+    "copyright": "TechRest © 2025",
+    "topmenu_links": [
+        {"name": "Ir ao Tablet ▶️", "url": "pagina_tablet", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "core"},
+    ],
+    "custom_links": {
+        "core": [
+            {
+                "name": "Gestor de Pedidos",
+                "url": "/gestor/",
+                "icon": "fa fa-clipboard-list",
+                "permissions": ["core.view_pedidos"],
+            }
+        ]
+    },
+    "custom_css": "css/custom.css"
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -116,8 +144,19 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGIN_URL = '/admin/login/'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'core', 'static'),
+]
+
+
+ADMIN_SITE_HEADER = "TechRest"
+ADMIN_SITE_TITLE = "Administração"
+

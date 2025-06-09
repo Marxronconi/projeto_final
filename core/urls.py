@@ -1,21 +1,22 @@
-"""admin_django URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home')
+    path('', views.home, name='home'),
+    path('tablet/', views.pagina_tablet, name='pagina_tablet'),
+    path('categoria/<int:categoria_id>/', views.produtos_por_categoria, name='produtos_categoria'),
+    path('mesa/', views.escolher_mesa, name='escolher_mesa'),
+    path('verificar-senha/', views.verificar_senha, name='verificar_senha'),
+
+    path('carrinho/adicionar/<int:produto_id>/', views.adicionar_carrinho, name='adicionar_carrinho'),
+    path('carrinho/remover/<int:produto_id>/', views.remover_carrinho, name='remover_carrinho'),
+    path('carrinho/', views.carrinho, name='carrinho'),
+    path('enviar-pedido/', views.enviar_pedido, name='enviar_pedido'),
+
+    path('gestor/', views.gestor_pedidos, name='gestor_pedidos'),
+    path('gestor/excluir/<int:pedido_id>/', views.excluir_pedido, name='excluir_pedido'),
+    path('gestor/status/<int:pedido_id>/', views.atualizar_status, name='atualizar_status'),
+
+    path('ajax/categoria/<int:id>/', views.carregar_produtos_categoria, name='carregar_produtos_categoria'),
+
 ]

@@ -1,0 +1,10 @@
+.navbar-brand img, .brand-link img {
+  max-height: 50px !important;
+  width: auto;
+}
+
+.login-logo img {
+  max-width: 160px !important;
+  height: auto;
+  margin-bottom: 20px;
+}
