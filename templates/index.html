@@ -184,7 +184,7 @@
   <div class="topbar">
     <h4>{{ informacao.nome|default:"Restaurante" }}</h4>
     <div>
-      <a href="{% url 'carrinho' %}" class="btn btn-success me-2">
+      <a href="{% url 'carrinho_tablet' %}" class="btn btn-success me-2">
         <i class="lni lni-cart"></i> Carrinho
       </a>
       <a href="{% url 'verificar_senha' %}?next={% url 'escolher_mesa' %}" class="mesa">

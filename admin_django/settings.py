@@ -114,9 +114,19 @@ JAZZMIN_SETTINGS = {
     "copyright": "TechRest © 2025",
     "topmenu_links": [
         {"name": "Ir ao Tablet ▶️", "url": "pagina_tablet", "permissions": ["auth.view_user"]},
+        {"name": "Ir ao Mobile 📱", "url": "pagina_mobile", "permissions": ["auth.view_user"]},
         {"model": "auth.User"},
         {"app": "core"},
     ],
+    "icons": {
+        "core.Categoria": "fas fa-utensils",
+        "core.Produto": "fas fa-pizza-slice",
+        "core.Divulgacoes": "fas fa-bullhorn",
+        "core.Garcom": "fas fa-user-tie",
+        "core.Mesa": "fas fa-chair",
+        "core.Informacoes": "fas fa-info-circle",
+        "core.Pedidos": "fas fa-receipt",  # nome exato do model usado
+        },
     "custom_links": {
         "core": [
             {

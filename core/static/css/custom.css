@@ -1,10 +1,40 @@
+/* Logo ajustes já existentes */
 .navbar-brand img, .brand-link img {
-  max-height: 50px !important;
+  max-height: 35px !important;  /* Reduzido de 50px */
   width: auto;
+  margin-left: 10px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .login-logo img {
   max-width: 160px !important;
   height: auto;
   margin-bottom: 20px;
+}
+
+/* === NOVOS AJUSTES PARA MENU === */
+
+/* Remove scroll e espaço extra no menu lateral */
+.sidebar {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none; /* Firefox */
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none !important; /* Chrome/Safari */
+}
+
+/* Garante que o menu use a largura total da sidebar */
+.main-sidebar {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+  width: 250px !important;
+}
+
+/* Corrige conteúdo que força rolagem horizontal */
+.content-wrapper {
+  margin-left: 240px !important;  /* Combine com o tamanho real da sidebar */
+  padding-left: 10px;
 }

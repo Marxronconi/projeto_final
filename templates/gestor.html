@@ -12,10 +12,16 @@
     <a href="{% url 'home' %}" class="btn btn-secondary mb-3">Voltar</a>
 
     {% for pedido in pedidos %}
+      {% with total_base=pedido.total_base %}
       <div class="card mb-3">
         <div class="card-header d-flex justify-content-between align-items-center">
           <span>
             Pedido nº {{ pedido.numero }} - Mesa: {{ pedido.mesa.numero }} - {{ pedido.criado|date:"d/m/Y H:i" }}
+            {% if pedido.pago %}
+              <span class="badge bg-success" id="status-pago-{{ pedido.id }}">PAGO</span>
+            {% else %}
+              <span class="badge bg-success d-none" id="status-pago-{{ pedido.id }}">PAGO</span>
+            {% endif %}
           </span>
           <div class="d-flex gap-2">
             <form method="post" action="{% url 'atualizar_status' pedido.id %}">
@@ -33,16 +39,140 @@
           </div>
         </div>
         <div class="card-body">
-          <ul class="mb-0">
+          <ul class="mb-2">
             {% for item in pedido.itens.all %}
               <li>{{ item.produto.nome }} - R$ {{ item.preco|floatformat:2 }}</li>
             {% endfor %}
           </ul>
+
+          <div class="form-check mb-2">
+            <input class="form-check-input garcom-toggle" type="checkbox" data-pedido-id="{{ pedido.id }}" checked>
+            <label class="form-check-label">Incluir 10% do garçom</label>
+          </div>
+
+          <p>Total: R$
+            <span
+              id="total-pedido-{{ pedido.id }}"
+              data-base="{{ total_base|default:0|floatformat:2 }}">
+              {{ total_base|default:0|floatformat:2 }}
+            </span>
+          </p>
+
+          {% if not pedido.pago %}
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalPagamento-{{ pedido.id }}">
+              Fechar Conta
+            </button>
+          {% endif %}
         </div>
       </div>
+
+      <!-- Modal Pagamento -->
+      <div class="modal fade" id="modalPagamento-{{ pedido.id }}" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content p-3">
+            <h5 class="modal-title">Fechar Conta - Pedido {{ pedido.numero }}</h5>
+
+            <div class="mb-2">
+              <label>Forma de pagamento:</label>
+              <select class="form-control tipo-pagamento" data-pedido-id="{{ pedido.id }}">
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+                <option value="pix">Pix</option>
+              </select>
+            </div>
+
+            <div class="mb-2 valor-recebido" id="recebido-{{ pedido.id }}" style="display: none;">
+              <label>Valor Recebido (R$):</label>
+              <input type="number" class="form-control recebido-input" data-pedido-id="{{ pedido.id }}">
+              <p>Troco: R$ <span id="troco-{{ pedido.id }}">0,00</span></p>
+            </div>
+
+            <button class="btn btn-primary confirmar-pagamento" data-pedido-id="{{ pedido.id }}">
+              Confirmar Pagamento
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endwith %}
     {% empty %}
       <p>Sem pedidos registrados.</p>
     {% endfor %}
   </div>
+
+  <!-- JS Bootstrap + lógica -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll('.garcom-toggle').forEach(input => {
+      input.addEventListener('change', function () {
+        const id = this.dataset.pedidoId;
+        const base = parseFloat(document.getElementById(`total-pedido-${id}`).dataset.base.replace(',', '.'));
+        const totalElement = document.getElementById(`total-pedido-${id}`);
+        const comTaxa = this.checked ? (base * 1.10).toFixed(2) : base.toFixed(2);
+        totalElement.innerText = comTaxa.replace('.', ',');
+      });
+    });
+
+    document.querySelectorAll('.tipo-pagamento').forEach(select => {
+      select.addEventListener('change', function () {
+        const id = this.dataset.pedidoId;
+        document.getElementById(`recebido-${id}`).style.display = this.value === 'dinheiro' ? 'block' : 'none';
+      });
+    });
+
+    document.querySelectorAll('.recebido-input').forEach(input => {
+      input.addEventListener('input', function () {
+        const id = this.dataset.pedidoId;
+        const total = parseFloat(document.getElementById(`total-pedido-${id}`).innerText.replace(',', '.'));
+        const recebido = parseFloat(this.value);
+        const troco = (recebido - total).toFixed(2);
+        document.getElementById(`troco-${id}`).innerText = troco > 0 ? troco.replace('.', ',') : '0,00';
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.garcom-toggle').forEach(input => {
+        input.dispatchEvent(new Event('change'));
+      });
+    });
+
+    document.querySelectorAll('.confirmar-pagamento').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.pedidoId;
+
+        fetch(`/pedido/${id}/pagar/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+        }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById(`status-pago-${id}`).classList.remove('d-none');
+              this.innerText = 'Pagamento Confirmado';
+              this.classList.remove('btn-primary');
+              this.classList.add('btn-secondary');
+              this.disabled = true;
+              const modal = bootstrap.Modal.getInstance(document.getElementById(`modalPagamento-${id}`));
+              modal.hide();
+            }
+          });
+      });
+    });
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  </script>
 </body>
 </html>

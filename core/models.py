@@ -121,6 +121,8 @@ class Pedidos(Base):
     mesa = models.ForeignKey('core.Mesa', verbose_name='Nº da Mesa', on_delete=models.DO_NOTHING)
     numero = models.IntegerField('Número do pedido', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    hora = models.TimeField(default=now)
+    pago = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.numero:
@@ -146,7 +148,3 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.produto.nome} (R$ {self.preco:.2f})"
-
-class Pedido(models.Model):
-    mesa = models.ForeignKey(Mesa, on_delete=models.CASCADE)
-    hora = models.DateTimeField(auto_now_add=True)
