@@ -21,10 +21,9 @@ class ProdutoAdmin(admin.ModelAdmin):
 
 @admin.register(Divulgacoes)
 class DivulgacoesAdmin(admin.ModelAdmin):
-    list_display = ('produto', 'ativo')
-    search_fields = ('produto__nome',)
+    list_display = ('nome', 'ativo')
     list_filter = ('ativo',)
-    fields = ('produto', 'imagem', 'ativo')
+    fields = ('nome', 'imagem', 'ativo')
 
 @admin.register(Garcom)
 class GarcomAdmin(admin.ModelAdmin):
@@ -40,10 +39,10 @@ class MesaAdmin(admin.ModelAdmin):
 
 @admin.register(Informacoes)
 class InformacoesAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'logo_preview', 'ativo')
+    list_display = ('nome', 'ativo', 'tema')
     search_fields = ('nome',)
     list_filter = ('ativo',)
-    fields = ('nome', 'logo', 'sobre', 'ativo')
+    fields = ('nome', 'logo', 'sobre', 'ativo', 'tema')
 
     def logo_preview(self, obj):
         if obj.logo:

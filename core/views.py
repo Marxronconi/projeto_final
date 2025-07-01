@@ -63,7 +63,7 @@ def adicionar_carrinho(request, produto_id):
         if not request.path.startswith('/mobile/'):
             messages.success(request, "Produto adicionado ao carrinho!")
 
-        return redirect('pagina_tablet')
+        return redirect('produtos_categoria', categoria_id=produto.categoria.id)
 
 
 def remover_carrinho(request, produto_id):

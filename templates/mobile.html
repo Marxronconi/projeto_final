@@ -8,17 +8,43 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <style>
     body {
-      background: #f4f4f4;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
 
+    body.tema-claro {
+      background: #f4f4f4;
+      color: #000;
+    }
+    body.tema-claro .topbar { background: #eee; }
+    body.tema-claro .categorias-scroll { background: #ddd; }
+
+    body.tema-escuro {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    body.tema-escuro .topbar { background: #2a2a2a; }
+    body.tema-escuro .categorias-scroll { background: #333; }
+
+    body.tema-amarelo {
+      background: #fff8dc;
+      color: #000;
+    }
+    body.tema-amarelo .topbar { background: #fcebb6; }
+    body.tema-amarelo .categorias-scroll { background: #f9e6a5; }
+
+    body.tema-vermelho {
+      background: #ffe5e5;
+      color: #000;
+    }
+    body.tema-vermelho .topbar { background: #cc5c5c; color: white; }
+    body.tema-vermelho .categorias-scroll { background: #f4baba; }
+
     .topbar {
       padding: 10px;
       display: flex;
       justify-content: flex-end;
-      background: #eee;
     }
 
     .topbar a {
@@ -68,7 +94,6 @@
       overflow-x: auto;
       white-space: nowrap;
       padding: 10px;
-      background: #ddd;
       border-bottom: 1px solid #bbb;
       width: 100%;
     }
@@ -162,13 +187,12 @@
     }
   </style>
 </head>
-<body>
+<body class="tema-{{ informacao.tema }}">
 
   <div class="topbar">
     <a href="{% url 'carrinho_mobile' %}">CARRINHO</a>
   </div>
 
-  <!-- Mensagens -->
   {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
@@ -199,7 +223,6 @@
     <a href="{% url 'verificar_senha' %}?next=/admin/">VOLTAR</a>
   </div>
 
-  <!-- CATEGORIAS -->
   <div class="categorias-scroll">
     {% for categoria in categorias %}
       <a href="{% url 'produtos_mobile' categoria.id %}">
@@ -209,7 +232,6 @@
     {% endfor %}
   </div>
 
-  <!-- PRODUTOS -->
   <div class="container mt-3">
     {% if produtos %}
       {% for produto in produtos %}

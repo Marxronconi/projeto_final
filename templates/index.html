@@ -11,13 +11,50 @@
       height: 100%;
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
       overflow-x: hidden;
     }
 
+    /* Temas */
+    body.tema-claro {
+      background-color: #f4f4f4;
+      color: #000;
+    }
+
+    body.tema-claro .topbar { background-color: white; color: #000; }
+    body.tema-claro .sidebar { background-color: #eaeaea; }
+    body.tema-claro .sobre-restaurante,
+    body.tema-claro #produtos-container { background-color: #fff; }
+
+    body.tema-escuro {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    body.tema-escuro .topbar,
+    body.tema-escuro .sidebar,
+    body.tema-escuro .sobre-restaurante,
+    body.tema-escuro #produtos-container {
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+
+    body.tema-amarelo { background-color: #fff8dc; }
+    body.tema-amarelo .topbar { background-color: #fcebb6; }
+    body.tema-amarelo .sidebar { background-color: #f9e6a5; }
+    body.tema-amarelo .sobre-restaurante,
+    body.tema-amarelo #produtos-container { background-color: #fff1bc; }
+
+    body.tema-vermelho { background-color: #ffe5e5; }
+    body.tema-vermelho .topbar { background-color: #cc5c5c; color: white; }
+    body.tema-vermelho .sidebar { background-color: #d66; }
+    body.tema-vermelho .sobre-restaurante,
+    body.tema-vermelho #produtos-container { background-color: #ffd6d6; }
+    body.tema-vermelho .topbar .mesa,
+    body.tema-vermelho .topbar .voltar { background-color: #f4baba; }
+
+    /* Sidebar e logo */
     .sidebar {
       width: 90px;
-      background: #eaeaea;
       position: fixed;
       top: 0;
       left: 0;
@@ -29,10 +66,12 @@
       z-index: 10;
     }
 
-    .sidebar img {
-      width: 60px;
-      height: 60px;
+    .logo-img {
+      width: 90px;
+      height: 90px;
       object-fit: contain;
+      margin-top: 10px;
+      margin-bottom: 20px;
     }
 
     .categorias-scroll {
@@ -40,6 +79,9 @@
       width: 100%;
       overflow-y: auto;
       padding-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 45px; /* distância entre categorias */
     }
 
     .categoria-icone {
@@ -48,20 +90,30 @@
       align-items: center;
       text-align: center;
       font-size: 12px;
-      gap: 4px;
       width: 70px;
-      margin: 10px auto;
+      margin: 0 auto;
       word-wrap: break-word;
+      transition: background 0.3s;
+    }
+
+    .categoria-icone img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+
+    .categoria-icone label {
+      margin-top: 8px; /* espaço entre ícone e nome */
+      display: block;
     }
 
     .categoria-icone a {
       text-decoration: none;
-      color: #000;
+      color: inherit;
     }
 
     .topbar {
       margin-left: 90px;
-      background: white;
       padding: 10px 20px;
       border-bottom: 2px solid #ccc;
       display: flex;
@@ -119,7 +171,6 @@
     .sobre-restaurante {
       flex: 1;
       padding: 20px;
-      background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       overflow: hidden;
@@ -134,7 +185,7 @@
     .sobre-restaurante p {
       margin: 0;
       font-size: 15px;
-      color: #333;
+      color: inherit;
       line-height: 1.4;
     }
 
@@ -142,7 +193,6 @@
       margin-left: 90px;
       padding: 20px;
       overflow-y: auto;
-      background-color: #f9f9f9;
       height: auto;
     }
 
@@ -159,27 +209,26 @@
     }
   </style>
 </head>
-<body>
+<body class="tema-{{ informacao.tema }}">
 
-  <div class="sidebar">
-    <div style="padding: 10px 0;">
-      {% if informacao.logo %}
-        <img src="{{ informacao.logo.url }}" alt="Logo">
-      {% endif %}
-    </div>
-    <div class="categorias-scroll">
-      {% for categoria in categorias %}
-      <div class="categoria-icone">
-        <a href="{% url 'produtos_categoria' categoria.id %}">
+<!-- Sidebar -->
+<div class="sidebar">
+  <div style="padding: 10px 0;">
+    {% if informacao.logo %}
+      <img src="{{ informacao.logo.url }}" alt="Logo" class="logo-img">
+    {% endif %}
+  </div>
+  <div class="categorias-scroll">
+    {% for categoria in categorias %}
+      <div class="categoria-icone {% if categoria_selecionada.id == categoria.id %}ativa{% endif %}">
+        <a href="{% url 'produtos_categoria' categoria.id %}" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; color: inherit;">
           <img src="{% static 'icons/' %}{{ categoria.icone }}" alt="{{ categoria.nome }}">
-        </a>
-        <a href="{% url 'produtos_categoria' categoria.id %}">
-          <label>{{ categoria.nome }}</label>
+          <div style="margin-top: 4px;">{{ categoria.nome }}</div>
         </a>
       </div>
-      {% endfor %}
-    </div>
+    {% endfor %}
   </div>
+</div>
 
   <div class="topbar">
     <h4>{{ informacao.nome|default:"Restaurante" }}</h4>

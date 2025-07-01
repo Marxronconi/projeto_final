@@ -32,7 +32,7 @@ class Categoria(Base):
 class Produto(Base):
     nome = models.CharField('Nome', max_length=100)
     preco = models.DecimalField('Preço', max_digits=6, decimal_places=2)
-    descricao = models.TextField('Descrição')
+    descricao = models.TextField('Descrição', blank=True, null=True)
     categoria = models.ForeignKey('core.Categoria', verbose_name='Categoria', on_delete=models.DO_NOTHING)
     imagem = StdImageField(
         'Imagem',
@@ -50,7 +50,7 @@ class Produto(Base):
         return self.nome
 
 class Divulgacoes(Base):
-    produto = models.ForeignKey('core.Produto', verbose_name='Produto', on_delete=models.DO_NOTHING)
+    nome = models.CharField('Nome da Divulgação', max_length=100)
     imagem = StdImageField(
         'Imagem',
         upload_to=get_file_path,
@@ -64,7 +64,7 @@ class Divulgacoes(Base):
         verbose_name_plural = '3. Divulgações'
 
     def __str__(self):
-        return f'Divulgação de {self.produto.nome}'
+        return self.nome
 
 class Garcom(Base):
     nome = models.CharField('Nome', max_length=50)
@@ -98,6 +98,14 @@ class Informacoes(Base):
         null=True
     )
     sobre = models.TextField('Sobre', max_length=1000, blank=True, null=True)
+    TEMA_CHOICES = [
+        ('claro', 'Claro'),
+        ('escuro', 'Escuro'),
+        ('amarelo', 'Amarelo'),
+        ('vermelho', 'Vermelho'),
+    ]
+
+    tema = models.CharField('Tema do Cardápio', max_length=20, choices=TEMA_CHOICES, default='claro')
 
     def clean(self):
         if self.ativo:
@@ -138,7 +146,7 @@ class Pedidos(Base):
 
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedidos, on_delete=models.CASCADE, related_name='itens')
-    produto = models.ForeignKey('core.Produto', verbose_name='Produto', on_delete=models.DO_NOTHING)
+    produto = models.ForeignKey('core.Produto', verbose_name='Produto', on_delete=models.CASCADE)
     preco = models.DecimalField('Preço', max_digits=6, decimal_places=2, blank=True)
 
     def save(self, *args, **kwargs):
